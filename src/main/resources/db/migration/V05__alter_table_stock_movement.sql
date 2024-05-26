@@ -1,0 +1,1 @@
+ALTER TABLE IF EXISTS stock_movement add column movement_datetime timestamp without time zone default current_timestamp
