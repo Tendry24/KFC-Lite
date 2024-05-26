@@ -1,12 +1,16 @@
 package org.kfc.kfcmada.repository;
 
+import org.kfc.kfcmada.dto.StockResult;
 import org.kfc.kfcmada.model.MovementType;
 import org.kfc.kfcmada.model.Stock;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +41,7 @@ public class StockRepository {
         return stock;
     }
 
-    public List<Stock> getAllStock(Long idResto, Long idIngredient)  {
+    public List<Stock> getAllMovement(Long idResto, Long idIngredient)  {
         String sql = "select * from stock_movement where id_resto = ? and id_ingredient= ?";
         try{
             Connection connection = dataSource.getConnection();
@@ -58,9 +62,39 @@ public class StockRepository {
                 stock.setQuantity(result.getDouble("quantity"));
                 stock.setMovementType(MovementType.valueOf(result.getString("movement_type")));
                 stock.setUnityId(result.getLong("unity_id"));
+                stock.setMovementDateTime(result.getTimestamp("movement_datetime").toInstant());
                 list.add(stock);
             }
             return list;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<StockResult> findMoveBetweenOnDate(String date){
+        String sql = "SELECT id_ingredient,quantity FROM stock_movement WHERE movement_datetime <= ?";
+        try {
+            Connection connection = dataSource.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            if (date == null){
+                statement.setTimestamp(1,Timestamp.valueOf(LocalDateTime.now()));
+            }else {
+                statement.setTimestamp(1,Timestamp.valueOf(date));
+            }
+
+            statement.executeQuery();
+
+            ResultSet resultSet = statement.getResultSet();
+            List<StockResult> results = new ArrayList<>();
+            while(resultSet.next()){
+                StockResult stockResults = new StockResult();
+                stockResults.setIngredientTempl(resultSet.getLong("id_ingredient"));
+                stockResults.setQuantity(resultSet.getDouble("quantity"));
+                results.add(stockResults);
+            }
+            return results;
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

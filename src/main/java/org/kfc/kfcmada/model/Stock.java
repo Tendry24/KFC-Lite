@@ -2,6 +2,8 @@ package org.kfc.kfcmada.model;
 
 import lombok.*;
 
+import java.time.Instant;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -12,6 +14,7 @@ public class Stock {
     private Long idResto;
     private Long idIngredientTempl;
     private Double quantity;
+    private Instant movementDateTime;
     private MovementType movementType;
     private Long unityId;
 }
