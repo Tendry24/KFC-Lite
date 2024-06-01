@@ -5,8 +5,6 @@ import org.kfc.kfcmada.service.StockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.List;
 
 @RestController
@@ -16,17 +14,20 @@ public class StockController {
     private StockService stockService;
 
     @PostMapping("")
-    public Stock saveMovement(@RequestBody Stock stock) throws SQLException {
+    public Stock saveMovement(@RequestBody Stock stock){
         return stockService.save(stock);
     }
 
     @GetMapping("")
-    public List<Stock> findAllMovement(@RequestParam Long idResto, @RequestParam Long idIngredient) throws SQLException {
-        return stockService.getAllMovement(idResto, idIngredient);
+    public List<Stock> findAllMovement(@RequestParam(required = false) Long idResto) {
+        return stockService.getAllMovement(idResto);
     }
 
     @GetMapping("/on-date")
-    public Double findStockOnDate(@RequestParam(required = false) String date){
-        return stockService.getStockByGivenDate(date);
+    public Double findStockOnDate(@RequestParam(required = false) String date,
+                                  @RequestParam Long idResto,
+                                  @RequestParam Long idIngredient
+    ){
+        return stockService.getStockByGivenDate(date,idResto,idIngredient);
     }
  }

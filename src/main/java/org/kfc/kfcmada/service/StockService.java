@@ -17,12 +17,12 @@ public class StockService {
         return stockRepository.makeMovement(stock);
     }
 
-    public List<Stock> getAllMovement(Long idResto, Long idIngredient) {
-        return stockRepository.getAllMovement(idResto, idIngredient);
+    public List<Stock> getAllMovement(Long idResto) {
+        return stockRepository.getAllMovement(idResto);
     }
 
-    public Double getStockByGivenDate(String date){
-        List<StockResult> allMove=  stockRepository.findMoveBetweenOnDate(date);
+    public Double getStockByGivenDate(String date,Long idResto,Long idIngredient){
+        List<StockResult> allMove=  stockRepository.findMoveBetweenOnDate(date,idResto,idIngredient);
         return allMove.stream().mapToDouble(StockResult::getQuantity).sum();
     }
 }

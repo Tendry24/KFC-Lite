@@ -41,14 +41,14 @@ public class StockRepository {
         return stock;
     }
 
-    public List<Stock> getAllMovement(Long idResto, Long idIngredient)  {
-        String sql = "select * from stock_movement where id_resto = ? and id_ingredient= ?";
+    public List<Stock> getAllMovement(Long idResto)  {
+        String sql = "select * from stock_movement where id_resto = ?";
         try{
             Connection connection = dataSource.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql);
 
             statement.setLong(1, idResto);
-            statement.setLong(2, idIngredient);
+            //statement.setLong(2, idIngredient);
 
             statement.executeQuery();
 
@@ -71,8 +71,8 @@ public class StockRepository {
         }
     }
 
-    public List<StockResult> findMoveBetweenOnDate(String date){
-        String sql = "SELECT id_ingredient,quantity FROM stock_movement WHERE movement_datetime <= ?";
+    public List<StockResult> findMoveBetweenOnDate(String date,Long idResto,Long idIngredient){
+        String sql = "SELECT id_ingredient,quantity FROM stock_movement WHERE movement_datetime <= ? and id_resto = ? and id_ingredient = ?";
         try {
             Connection connection = dataSource.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql);
@@ -82,6 +82,8 @@ public class StockRepository {
             }else {
                 statement.setTimestamp(1,Timestamp.valueOf(date));
             }
+            statement.setLong(2,idResto);
+            statement.setLong(3,idIngredient);
 
             statement.executeQuery();
 
