@@ -16,5 +16,4 @@ public class Stock {
     private Double quantity;
     private Instant movementDateTime;
     private MovementType movementType;
-    private Long unityId;
 }

@@ -1,5 +1,6 @@
 package org.kfc.kfcmada.repository;
 
+import org.kfc.kfcmada.dto.MovementResult;
 import org.kfc.kfcmada.dto.StockResult;
 import org.kfc.kfcmada.model.MovementType;
 import org.kfc.kfcmada.model.Stock;
@@ -20,8 +21,8 @@ public class StockRepository {
     private DataSource dataSource;
 
     public Stock makeMovement(Stock stock) {
-        String sql = "insert into stock_movement (id_resto, id_ingredient, quantity, movement_type,unity_id) " +
-                "values (?,?,?,?,?)";
+        String sql = "insert into stock_movement (id_resto, id_ingredient, quantity, movement_type) " +
+                "values (?,?,?,?)";
         try{
             Connection connection = dataSource.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -33,7 +34,6 @@ public class StockRepository {
                 statement.setDouble(3, stock.getQuantity());
             }
             statement.setString(4, stock.getMovementType().toString());
-            statement.setLong(5, stock.getUnityId());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -41,29 +41,27 @@ public class StockRepository {
         return stock;
     }
 
-    public List<Stock> getAllMovement(Long idResto)  {
-        String sql = "select * from stock_movement where id_resto = ?";
+    public List<MovementResult> getAllMovement(Long idResto)  {
+        String sql = "select s.movement_datetime, i.name , s.quantity, s.movement_type from stock_movement s " +
+                "INNER JOIN ingredient_template i on s.id_ingredient = i.id " +
+                "where id_resto = ?";
         try{
             Connection connection = dataSource.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql);
 
             statement.setLong(1, idResto);
-            //statement.setLong(2, idIngredient);
 
             statement.executeQuery();
 
             ResultSet result = statement.getResultSet();
-            List<Stock> list = new ArrayList<>();
+            List<MovementResult> list = new ArrayList<>();
             while(result.next()){
-                Stock stock = new Stock();
-                stock.setId(result.getLong("id"));
-                stock.setIdResto(result.getLong("id_resto"));
-                stock.setIdIngredientTempl(result.getLong("id_ingredient"));
-                stock.setQuantity(result.getDouble("quantity"));
-                stock.setMovementType(MovementType.valueOf(result.getString("movement_type")));
-                stock.setUnityId(result.getLong("unity_id"));
-                stock.setMovementDateTime(result.getTimestamp("movement_datetime").toInstant());
-                list.add(stock);
+                MovementResult movementResult = new MovementResult();
+                movementResult.setMovementDateTime(result.getTimestamp("movement_datetime"));
+                movementResult.setName(result.getString("name"));
+                movementResult.setQuantity(result.getDouble("quantity"));
+                movementResult.setMovementType(result.getString("movement_type"));
+                list.add(movementResult);
             }
             return list;
         } catch (SQLException e) {

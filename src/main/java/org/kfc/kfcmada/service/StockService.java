@@ -1,5 +1,6 @@
 package org.kfc.kfcmada.service;
 
+import org.kfc.kfcmada.dto.MovementResult;
 import org.kfc.kfcmada.dto.StockResult;
 import org.kfc.kfcmada.model.Stock;
 import org.kfc.kfcmada.repository.StockRepository;
@@ -17,7 +18,7 @@ public class StockService {
         return stockRepository.makeMovement(stock);
     }
 
-    public List<Stock> getAllMovement(Long idResto) {
+    public List<MovementResult> getAllMovement(Long idResto) {
         return stockRepository.getAllMovement(idResto);
     }
 

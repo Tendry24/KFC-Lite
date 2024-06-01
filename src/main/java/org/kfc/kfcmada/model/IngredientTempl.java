@@ -1,8 +1,9 @@
 package org.kfc.kfcmada.model;
 
+import lombok.Data;
 import lombok.Getter;
 
-@Getter
+@Data
 public class IngredientTempl {
     private Long id;
     private String name;

@@ -1,5 +1,6 @@
 package org.kfc.kfcmada.controller;
 
+import org.kfc.kfcmada.dto.MovementResult;
 import org.kfc.kfcmada.model.Stock;
 import org.kfc.kfcmada.service.StockService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class StockController {
     }
 
     @GetMapping("")
-    public List<Stock> findAllMovement(@RequestParam(required = false) Long idResto) {
+    public List<MovementResult> findAllMovement(@RequestParam(required = false) Long idResto) {
         return stockService.getAllMovement(idResto);
     }
 
